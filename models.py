@@ -3,7 +3,7 @@ from sqlalchemy.orm import relationship
 from database import Base
 
 class Effect(Base):
-    __tablename__ = "effects"
+    __tablename__ = "Effects"
 
     effect_id = Column(Integer, primary_key=True)
     effect = Column(String,nullable=False, unique=True)
