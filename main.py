@@ -1,6 +1,20 @@
-from fastapi import FastAPI
+from fastapi import FastAPI,Depends
+from sqlalchemy.orm import Session
+import models
+from database import engine, SessionLocal
+from schemas import EffectOut
+from typing import List
+
 
 app = FastAPI()
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
 
 @app.get("/")
 def read_root():
@@ -17,3 +31,11 @@ def test_db():
     with engine.connect() as conn:
         result = conn.execute(text("SELECT now()"))
         return {"db_time": result.scalar()}
+
+@app.get("/effect/", response_model=List[EffectOut])
+def get_effects(db: Session = Depends(get_db)):
+    return db.query(models.Effect).all()
+    
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)

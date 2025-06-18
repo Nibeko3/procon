@@ -1,0 +1,53 @@
+from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy.orm import relationship
+from database import Base
+
+class Effect(Base):
+    __tablename__ = "effects"
+
+    effect_id = Column(Integer, primary_key=True)
+    effect = Column(String,nullable=False, unique=True)
+
+    cards = relationship("Card", back_populates="effect")
+
+
+class Card(Base):
+    __tablename__ = 'cards'
+
+    card_id = Column(Integer, primary_key=True)
+    name = Column(String, nullable=False)
+    keyword = Column(String, nullable=False)
+    cost = Column(Integer, nullable=False)
+    effect_id = Column(Integer, ForeignKey("effects.effect_id"), nullable=False)
+
+    explanation = relationship("Explanation", back_populates="card")
+    effect = relationship("Effect", back_populates="cards")
+    card_qs = relationship("Card_q", back_populates="card")
+
+
+class Question(Base):
+    __tablename__ = 'questions'
+
+    question_id = Column(Integer, primary_key=True)
+    question = Column(String, nullable=False)
+
+    card_qs = relationship("Card_q", back_populates="q")
+
+
+class Card_q(Base):
+    __tablename__ = "cards_q"
+
+    card_id = Column(Integer, ForeignKey("cards.card_id"), primary_key=True)
+    question_id = Column(Integer, ForeignKey("questions.question_id"), primary_key=True)
+
+    q = relationship("Question", back_populates="card_qs")
+    card = relationship("Card", back_populates="card_qs")
+
+
+class Explanation(Base):
+    __tablename__ = "explanations"
+
+    card_id = Column(Integer, ForeignKey("cards.card_id"), primary_key=True)
+    explanation = Column(String, nullable=False)
+
+    card = relationship("Card", back_populates="explanation")
