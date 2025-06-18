@@ -14,6 +14,7 @@ class Effect(Base):
 
 class Card(Base):
     __tablename__ = 'cards'
+    __table_args__ = {"schema": "public"}
 
     card_id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False)
@@ -28,6 +29,8 @@ class Card(Base):
 
 class Question(Base):
     __tablename__ = 'questions'
+    __table_args__ = {"schema": "public"}
+
 
     question_id = Column(Integer, primary_key=True)
     question = Column(String, nullable=False)
@@ -37,6 +40,7 @@ class Question(Base):
 
 class Card_q(Base):
     __tablename__ = "cards_q"
+    __table_args__ = {"schema": "public"}
 
     card_id = Column(Integer, ForeignKey("cards.card_id"), primary_key=True)
     question_id = Column(Integer, ForeignKey("questions.question_id"), primary_key=True)
@@ -47,6 +51,7 @@ class Card_q(Base):
 
 class Explanation(Base):
     __tablename__ = "explanations"
+    __table_args__ = {"schema": "public"}
 
     card_id = Column(Integer, ForeignKey("cards.card_id"), primary_key=True)
     explanation = Column(String, nullable=False)
