@@ -3,7 +3,8 @@ from sqlalchemy.orm import relationship
 from database import Base
 
 class Effect(Base):
-    __tablename__ = "Effects"
+    __tablename__ = "effects"
+    __table_args__ = {"schema": "public"}
 
     effect_id = Column(Integer, primary_key=True)
     effect = Column(String,nullable=False, unique=True)
