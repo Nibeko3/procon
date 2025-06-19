@@ -36,6 +36,3 @@ def test_db():
 def get_effects(db: Session = Depends(get_db)):
     return db.query(models.Effect).all()
     
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
