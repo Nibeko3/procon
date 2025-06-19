@@ -34,7 +34,7 @@ def test_db():
 
 @app.get("/effect/", response_model=List[EffectOut])
 def get_effects(db: Session = Depends(get_db)):
-    effects = db.query(models.Effect).filter(models.Effect.effect_id<=5).all()
-    return effects
+    return db.query(models.Effect).filter(models.Effect.effect_id<=5).all()
+
 
     
