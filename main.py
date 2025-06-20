@@ -1,9 +1,11 @@
-from fastapi import APIRouter,FastAPI,Depends
+from fastapi import APIRouter, FastAPI, Depends
 from sqlalchemy.orm import Session
 import models
 from database import engine, SessionLocal
 from schemas import EffectOut
 from typing import List
+from sqlalchemy import create_engine, text
+import os
 
 app = FastAPI()
 router = APIRouter()
@@ -15,13 +17,9 @@ def get_db():
     finally:
         db.close()
 
-
 @app.get("/")
 def read_root():
     return {"message": "fuck u world 1111"}
-    
-from sqlalchemy import create_engine,text
-import os
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 engine = create_engine(DATABASE_URL)
@@ -34,21 +32,23 @@ def test_db():
 
 @app.get("/effect/", response_model=List[EffectOut])
 def get_effects(db: Session = Depends(get_db)):
-    return db.query(models.Effect).filter(models.Effect.effect_id<=5).all()
+    return db.query(models.Effect).filter(models.Effect.effect_id <= 5).all()
 
 @router.get("/effect/text")
 def get_effect_text(effect_id: int, db: Session = Depends(get_db)):
     effect = db.query(models.Effect).filter(models.Effect.effect_id == effect_id).first()
     if not effect:
         return "該当する効果が見つかりません"
-    return effect.effect  # ← 文字列だけを返す
+    return effect.effect
 
 @router.get("/effect/text2")
-def get_effect_text(effect_id: int, db: Session = Depends(get_db)):
-    effect = db.query(models.Effect).filter(models.Effect.effect_id <= effect_id).all()
-    if not effect:
+def get_effect_text_list(effect_id: int, db: Session = Depends(get_db)):
+    effects = db.query(models.Effect).filter(models.Effect.effect_id <= effect_id).all()
+    if not effects:
         return "該当する効果が見つかりません"
-    return effect.effect  # ← 文字列だけを返す
+    return [e.effect for e in effects]
+
+app.include_router(router)
 app.include_router(router)
 
 
