@@ -7,6 +7,7 @@ from typing import List
 
 app = FastAPI()
 router = APIRouter()
+app.include_router(router)
 
 def get_db():
     db = SessionLocal()
