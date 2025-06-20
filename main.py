@@ -7,7 +7,6 @@ from typing import List
 
 app = FastAPI()
 router = APIRouter()
-app.include_router(router)
 
 def get_db():
     db = SessionLocal()
@@ -43,6 +42,8 @@ def get_effect_text(effect_id: int, db: Session = Depends(get_db)):
     if not effect:
         return "該当する効果が見つかりません"
     return effect.effect  # ← 文字列だけを返す
+app.include_router(router)
+
 
 
     
