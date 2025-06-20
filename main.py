@@ -1,12 +1,12 @@
-from fastapi import FastAPI,Depends
+from fastapi import APIRouter,FastAPI,Depends
 from sqlalchemy.orm import Session
 import models
 from database import engine, SessionLocal
 from schemas import EffectOut
 from typing import List
 
-
 app = FastAPI()
+router = APIRouter()
 
 def get_db():
     db = SessionLocal()
@@ -35,6 +35,13 @@ def test_db():
 @app.get("/effect/", response_model=List[EffectOut])
 def get_effects(db: Session = Depends(get_db)):
     return db.query(models.Effect).filter(models.Effect.effect_id<=5).all()
+
+@router.get("/effect/text")
+def get_effect_text(effect_id: int, db: Session = Depends(get_db)):
+    effect = db.query(models.Effect).filter(models.Effect.effect_id == effect_id).first()
+    if not effect:
+        return "該当する効果が見つかりません"
+    return effect.effect  # ← 文字列だけを返す
 
 
     
