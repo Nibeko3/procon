@@ -18,7 +18,7 @@ def get_db():
 
 @app.get("/")
 def read_root():
-    return {"message": "fuck u world"}
+    return {"message": "fuck u world 1111"}
     
 from sqlalchemy import create_engine,text
 import os
