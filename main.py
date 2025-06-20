@@ -19,7 +19,7 @@ def get_db():
 
 @app.get("/")
 def read_root():
-    return {"message": "fuck u world 1111"}
+    return {"message": "fuck u world 1112"}
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 engine = create_engine(DATABASE_URL)
@@ -48,7 +48,6 @@ def get_effect_text_list(effect_id: int, db: Session = Depends(get_db)):
         return "該当する効果が見つかりません"
     return [e.effect for e in effects]
 
-app.include_router(router)
 app.include_router(router)
 
 
