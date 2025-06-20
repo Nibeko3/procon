@@ -42,6 +42,13 @@ def get_effect_text(effect_id: int, db: Session = Depends(get_db)):
     if not effect:
         return "該当する効果が見つかりません"
     return effect.effect  # ← 文字列だけを返す
+
+@router.get("/effect/text2")
+def get_effect_text(effect_id: int, db: Session = Depends(get_db)):
+    effect = db.query(models.Effect).filter(models.Effect.effect_id <= effect_id).first()
+    if not effect:
+        return "該当する効果が見つかりません"
+    return effect.effect  # ← 文字列だけを返す
 app.include_router(router)
 
 
