@@ -19,7 +19,7 @@ def get_db():
 
 @app.get("/")
 def read_root():
-    return {"message": "world ver 0004"}#更新数
+    return {"message": "world ver 0005"}#更新数
 
 
 DATABASE_URL = os.getenv("DATABASE_URL")
@@ -42,6 +42,12 @@ def get_card_all(db: Session = Depends(get_db)):
     cards = db.query(models.Card).all()
     return [c.name for c in cards]
 
+@router.get("/card/filter")
+def get_card_name(card_id: int, db: Session = Depends(get_db)):
+    card = db.query(models.Card).filter(models.Card.card_id == card_id).first()
+    if not card:
+        return "該当する効果が見つかりません"
+    return card.name
 
 app.include_router(router)
 
