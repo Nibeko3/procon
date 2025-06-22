@@ -26,7 +26,7 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 engine = create_engine(DATABASE_URL)
 
 @router.get("/effect/all")
-def get_effect_texts(db: Session = Depends(get_db)):
+def get_effect_all(db: Session = Depends(get_db)):
     effects = db.query(models.Effect).all()
     return [e.effect for e in effects]
 
@@ -38,9 +38,9 @@ def get_effect_text(effect_id: int, db: Session = Depends(get_db)):
     return effect.effect
 
 @router.get("/card/all")
-def get_effect_texts(db: Session = Depends(get_db)):
-    effects = db.query(models.Card).all()
-    return [e.effect for e in effects]
+def get_card_all(db: Session = Depends(get_db)):
+    cards = db.query(models.Card).all()
+    return [c.name for c in cards]
 
 
 app.include_router(router)
