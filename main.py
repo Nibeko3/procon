@@ -19,29 +19,25 @@ def get_db():
 
 @app.get("/")
 def read_root():
-    return {"message": "fuck u world 1112"}
+    return {"message": "world ver 0003"}#更新数
+
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 engine = create_engine(DATABASE_URL)
 
-@app.get("/test-db")
-def test_db():
-    with engine.connect() as conn:
-        result = conn.execute(text("SELECT now()"))
-        return {"db_time": result.scalar()}
+@router.get("/effect/all", response_model=List[str])
+def get_effect_texts(db: Session = Depends(get_db)):
+    effects = db.query(models.Effect).all()
+    return [e.effect for e in effects]
 
-@app.get("/effect/", response_model=List[EffectOut])
-def get_effects(db: Session = Depends(get_db)):
-    return db.query(models.Effect).filter(models.Effect.effect_id <= 5).all()
-
-@router.get("/effect/text")
+@router.get("/effect/filter")
 def get_effect_text(effect_id: int, db: Session = Depends(get_db)):
     effect = db.query(models.Effect).filter(models.Effect.effect_id == effect_id).first()
     if not effect:
         return "該当する効果が見つかりません"
     return effect.effect
 
-@router.get("/effect/text2")
+@router.get("/effect/like")
 def get_effect_text_list(effect_id: int, db: Session = Depends(get_db)):
     effects = db.query(models.Effect).filter(models.Effect.effect_id <= effect_id).all()
     if not effects:
