@@ -19,7 +19,7 @@ def get_db():
 
 @app.get("/")
 def read_root():
-    return {"message": "world ver 0003"}#更新数
+    return {"message": "world ver 0004"}#更新数
 
 
 DATABASE_URL = os.getenv("DATABASE_URL")
@@ -37,12 +37,11 @@ def get_effect_text(effect_id: int, db: Session = Depends(get_db)):
         return "該当する効果が見つかりません"
     return effect.effect
 
-@router.get("/effect/like")
-def get_effect_text_list(effect_id: int, db: Session = Depends(get_db)):
-    effects = db.query(models.Effect).filter(models.Effect.effect_id <= effect_id).all()
-    if not effects:
-        return "該当する効果が見つかりません"
+@router.get("/card/all")
+def get_effect_texts(db: Session = Depends(get_db)):
+    effects = db.query(models.Card).all()
     return [e.effect for e in effects]
+
 
 app.include_router(router)
 
