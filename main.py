@@ -25,7 +25,7 @@ def read_root():
 DATABASE_URL = os.getenv("DATABASE_URL")
 engine = create_engine(DATABASE_URL)
 
-@router.get("/effect/all", response_model=List[str])
+@router.get("/effect/all")
 def get_effect_texts(db: Session = Depends(get_db)):
     effects = db.query(models.Effect).all()
     return [e.effect for e in effects]
