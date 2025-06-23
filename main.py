@@ -19,7 +19,7 @@ def get_db():
 
 @app.get("/")
 def read_root():
-    return {"message": "world ver 1119"}#更新数
+    return {"message": "world ver 1120"}#更新数
 
 
 DATABASE_URL = os.getenv("DATABASE_URL")
@@ -31,7 +31,7 @@ def get_effect_all(db: Session = Depends(get_db)):
     effects = db.query(models.Effect).all()
     return effects
 
-@router.get("/effect")
+@router.get("/effect.effect")
 def get_effect_effect(db: Session = Depends(get_db)):
     effects = db.query(models.Effect).all()
     return [effect.effect for effect in effects]  
