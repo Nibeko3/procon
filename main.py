@@ -19,7 +19,7 @@ def get_db():
 
 @app.get("/")
 def read_root():
-    return {"message": "world ver 0005"}#更新数
+    return {"message": "world ver 0007"}#更新数
 
 
 DATABASE_URL = os.getenv("DATABASE_URL")
