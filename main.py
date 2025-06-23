@@ -40,9 +40,9 @@ def get_effect_text(effect_id: int, db: Session = Depends(get_db)):
 @router.get("/card/all")
 def get_card_all(db: Session = Depends(get_db)):
     cards = db.query(models.Card).all()
-    return [c.name for c in cards]
+    return cards
 
-@router.get("/card/filter")
+@router.get("/card.name/filter")
 def get_card_name(card_id: int, db: Session = Depends(get_db)):
     card = db.query(models.Card).filter(models.Card.card_id == card_id).first()
     if not card:
