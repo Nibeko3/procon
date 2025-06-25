@@ -29,6 +29,21 @@ def create_access_token(data: dict):
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
 # 登録
+@router.post("/register")
+def register(user: schemas.PlayerCreate, db: Session = Depends(get_db)):
+    if db.query(models.Player).filter_by(username=user.username).first():
+        raise HTTPException(status_code=400, detail="Username already registered")
+    
+    hashed_pw = hash_password(user.password)
+    new_user = models.Player(
+        username=user.username,
+        password_hash=hashed_pw
+    )
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+    return {"message": "User registered successfully"}
+
 # ログイン
 @router.post("/login")
 def login(user: schemas.PlayerLogin, db: Session = Depends(get_db)):
