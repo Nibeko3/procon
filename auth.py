@@ -46,27 +46,11 @@ def register(user: schemas.PlayerCreate, db: Session = Depends(get_db)):
 
 # ログイン
 @router.post("/login")
-def login(user: schemas.PlayerLogin, db: Session = Depends(get_db)):
-    db_user = db.query(models.Player).filter_by(username=user.username).first()
-
-    if db_user is None or db_user.password_hash is None:
-        raise HTTPException(status_code=401, detail="Invalid credentials")
-
-    if not verify_password(user.password, db_user.password_hash):
-        raise HTTPException(status_code=401, detail="Invalid credentials")
-
-    try:
-        access_token = create_access_token(data={"sub": db_user.username})
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Token error: {str(e)}")
-
-    return {"access_token": access_token, "token_type": "bearer"}
-
-'''@router.post("/login")
+@router.post("/login")
 def login(user: schemas.PlayerLogin, db: Session = Depends(get_db)):
     db_user = db.query(models.Player).filter_by(username=user.username).first()
     if not db_user or not verify_password(user.password, db_user.password_hash):
         raise HTTPException(status_code=401, detail="Invalid credentials")
     
     access_token = create_access_token(data={"sub": db_user.username})
-    return {"access_token": access_token, "token_type": "bearer"}'''
+    return {"access_token": access_token, "token_type": "bearer"}
