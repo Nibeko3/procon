@@ -3,12 +3,15 @@ from sqlalchemy.orm import Session
 import models
 from database import engine, SessionLocal
 from schemas import EffectOut
-from typing import List
 from sqlalchemy import create_engine, text
 import os
+from auth import router as auth_router
+
+
 
 app = FastAPI()
 router = APIRouter()
+app.include_router(auth_router)
 
 def get_db():
     db = SessionLocal()

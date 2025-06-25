@@ -6,3 +6,11 @@ class EffectOut(BaseModel):
     effect: str
 
     model_config = ConfigDict(from_attributes=True)
+
+class PlayerCreate(BaseModel):
+    username: str
+    password: str
+
+class PlayerLogin(BaseModel):
+    username: str
+    password: str
