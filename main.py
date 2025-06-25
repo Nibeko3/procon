@@ -6,12 +6,14 @@ from schemas import EffectOut
 from sqlalchemy import create_engine, text
 import os
 from auth import router as auth_router
+from match import router as match_router
 
 
 
 app = FastAPI()
 router = APIRouter()
 app.include_router(auth_router)
+app.include_router(match_router)
 
 def get_db():
     db = SessionLocal()
