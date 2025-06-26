@@ -75,7 +75,7 @@ class Match(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     player1_id = Column(Integer, ForeignKey("public.players.user_id"), nullable=False)
-    player2_id = Column(Integer, ForeignKey("public.players.user_id"), nullable=False)
+    player2_id = Column(Integer, ForeignKey("public.players.user_id"), nullable=True)
     current_turn = Column(Integer, default=1, nullable=False)
     current_player_id = Column(Integer, ForeignKey("public.players.user_id"), nullable=False)
 
