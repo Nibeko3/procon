@@ -30,20 +30,20 @@ def create_match(
     db.refresh(new_match)
     return new_match
 
-@router.post("/match/random", response_model=schemas.MatchInfo)
+@router.post("/match/random", response_model=schemas.MatchOut)
 def auto_match(
     db: Session = Depends(get_db),
     current_user: models.Player = Depends(get_current_user)
 ):
-    # 自分が既に待機してないか確認
-    existing_match = db.query(models.Match).filter(
+    # 自分がすでに待機中か確認
+    existing = db.query(models.Match).filter(
         models.Match.player1_id == current_user.user_id,
         models.Match.player2_id == None
     ).first()
-    if existing_match:
-        return existing_match
+    if existing:
+        return existing
 
-    # 相手が待機してるマッチを探す
+    # 他人が待機してるマッチがあれば参加
     open_match = db.query(models.Match).filter(
         models.Match.player2_id == None,
         models.Match.player1_id != current_user.user_id
@@ -56,12 +56,27 @@ def auto_match(
         db.refresh(open_match)
         return open_match
 
-    # 自分が待機するマッチを新規作成
+    # 新しく待機マッチを作成
     new_match = models.Match(
-        player1_id = current_user.user_id,
-        current_player_id = current_user.user_id
+        player1_id=current_user.user_id,
+        current_player_id=current_user.user_id
     )
     db.add(new_match)
     db.commit()
     db.refresh(new_match)
     return new_match
+
+@router.get("/match/{match_id}", response_model=schemas.MatchOut)
+def get_match(
+    match_id: int,
+    db: Session = Depends(get_db),
+    current_user: models.Player = Depends(get_current_user)
+):
+    match = db.query(models.Match).filter_by(id=match_id).first()
+    if not match:
+        raise HTTPException(status_code=404, detail="Match not found")
+
+    if current_user.user_id not in [match.player1_id, match.player2_id]:
+        raise HTTPException(status_code=403, detail="You are not a participant in this match")
+
+    return match
