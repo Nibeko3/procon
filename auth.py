@@ -48,7 +48,6 @@ def register(user: schemas.PlayerCreate, db: Session = Depends(get_db)):
 
 # ログイン
 @router.post("/login")
-@router.post("/login")
 def login(user: schemas.PlayerLogin, db: Session = Depends(get_db)):
     db_user = db.query(models.Player).filter_by(username=user.username).first()
     if not db_user or not verify_password(user.password, db_user.password_hash):

@@ -30,5 +30,6 @@ class MatchOut(BaseModel):
     production_power_player2: int
     created_at: str
 
-    class Config:
-        orm_mode = True
+    model_config = {
+        "from_attributes": True
+    }
