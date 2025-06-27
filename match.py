@@ -6,7 +6,7 @@ from auth import get_current_user  # トークンからユーザー取得
 
 router = APIRouter()
 
-'''@router.post("/match/create", response_model=schemas.MatchOut)
+@router.post("/match/create", response_model=schemas.MatchOut)
 def create_match(
     request: schemas.MatchCreate,
     db: Session = Depends(get_db),
@@ -28,7 +28,7 @@ def create_match(
     db.add(new_match)
     db.commit()
     db.refresh(new_match)
-    return new_match'''
+    return new_match
 
 from sqlalchemy.exc import SQLAlchemyError
 
