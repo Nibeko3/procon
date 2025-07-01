@@ -59,6 +59,7 @@ def auto_match(
     # 新しく待機マッチを作成
     new_match = models.Match(
         player1_id=current_user.user_id,
+        player2_id=0,
         current_player_id=current_user.user_id
     )
     db.add(new_match)
