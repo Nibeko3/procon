@@ -38,14 +38,14 @@ def auto_match(
     # 自分がすでに待機中か確認
     existing = db.query(models.Match).filter(
         models.Match.player1_id == current_user.user_id,
-        models.Match.player2_id == None
+        models.Match.player2_id == 0
     ).first()
     if existing:
         return existing
 
     # 他人が待機してるマッチがあれば参加
     open_match = db.query(models.Match).filter(
-        models.Match.player2_id == None,
+        models.Match.player2_id == 0,
         models.Match.player1_id != current_user.user_id
     ).first()
 
