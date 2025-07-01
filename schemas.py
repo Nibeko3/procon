@@ -23,7 +23,7 @@ class MatchCreate(BaseModel):
 class MatchOut(BaseModel):
     id: int
     player1_id: int
-    player2_id: int=0
+    player2_id: int
     current_turn: int
     current_player_id: int
     wallet_player1: int

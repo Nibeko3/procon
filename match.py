@@ -79,4 +79,15 @@ def get_match(
     if current_user.user_id not in [match.player1_id, match.player2_id]:
         raise HTTPException(status_code=403, detail="You are not a participant in this match")
 
-    return match
+    return schemas.MatchOut(
+        id=match.id,
+        player1_id=match.player1_id,
+        player2_id=match.player2_id or 0,
+        current_turn=match.current_turn,
+        current_player_id=match.current_player_id,
+        wallet_player1=match.wallet_player1,
+        wallet_player2=match.wallet_player2,
+        production_power_player1=match.production_power_player1,
+        production_power_player2=match.production_power_player2,
+        created_at=match.created_at,
+    )
