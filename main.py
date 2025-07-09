@@ -90,6 +90,18 @@ def get_card_keyword_filter(card_id: int, db: Session = Depends(get_db)):
         return "該当する効果が見つかりません"
     return card.keyword
 
+@router.get("/card.Explanation")
+def get_card_explanation(db: Session = Depends(get_db)):
+    cards = db.query(models.Explanation).all()
+    return [card.explanation for card in cards]  
+
+@router.get("/card.Explanation/filter")
+def get_card_explanation_filter(card_id: int, db: Session = Depends(get_db)):
+    card = db.query(models.Explanation).filter(models.Card.card_id == card_id).first()
+    if not card:
+        return "該当する効果が見つかりません"
+    return card.explanation
+
 app.include_router(router)
 
 
