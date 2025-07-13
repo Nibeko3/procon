@@ -55,7 +55,7 @@ def get_effects_by_cards(db: Session = Depends(get_db)):
         .join(models.Effect, models.Card.effect_id == models.Effect.effect_id)
         .all()
     )
-    return [effect[0] for effect in effects]  
+    return [effect.effect for effect in effects]  
 
 
 
