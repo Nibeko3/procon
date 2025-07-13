@@ -48,6 +48,16 @@ def get_effect_effect_filter(effect_id: int, db: Session = Depends(get_db)):
         return "該当する効果が見つかりません"
     return effect.effect
 
+@router.get("/effect/bycards")
+def get_effects_by_cards(db: Session = Depends(get_db)):
+    effects = (
+        db.query(models.Effect)
+        .join(models.Card, models.Effect.effect_id == models.Card.effect_id)
+        .all()
+    )
+    return effects
+
+
 
 @router.get("/card")
 def get_card_all(db: Session = Depends(get_db)):
@@ -97,7 +107,7 @@ def get_card_explanation(db: Session = Depends(get_db)):
 
 @router.get("/card.explanation/filter")
 def get_card_explanation_filter(card_id: int, db: Session = Depends(get_db)):
-    card = db.query(models.Explanation).filter(models.Card.card_id == card_id).first()
+    card = db.query(models.Explanation).filter(models.Explanation.card_id == card_id).first()
     if not card:
         return "該当する効果が見つかりません"
     return card.explanation
