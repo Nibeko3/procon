@@ -52,10 +52,10 @@ def get_effect_effect_filter(effect_id: int, db: Session = Depends(get_db)):
 def get_effects_by_cards(db: Session = Depends(get_db)):
     effects = (
         db.query(models.Card)
-        .join(models.Effect, models.Effect.effect_id == models.Card.effect_id)
+        .join(models.Effect, models.Card.effect_id == models.Effect.effect_id)
         .all()
     )
-    return [effect.effect for effect in effects]  
+    return [effect[0] for effect in effects]  
 
 
 
