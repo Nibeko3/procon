@@ -50,12 +50,12 @@ def get_effect_effect_filter(effect_id: int, db: Session = Depends(get_db)):
 
 @router.get("/effect/bycards")
 def get_effects_by_cards(db: Session = Depends(get_db)):
-    effects = (
+    cards = (
         db.query(models.Card)
         .join(models.Effect, models.Card.effect_id == models.Effect.effect_id)
         .all()
     )
-    return [effect.effect for effect in effects]  
+    return [card.effect.effect for card in cards]
 
 
 
