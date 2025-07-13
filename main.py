@@ -24,7 +24,7 @@ def get_db():
 
 @app.get("/")
 def read_root():
-    return {"message": "world ver 1120"}#更新数
+    return {"message": "world ver 4566"}#更新数
 
 
 DATABASE_URL = os.getenv("DATABASE_URL")
@@ -55,7 +55,7 @@ def get_effects_by_cards(db: Session = Depends(get_db)):
         .join(models.Card, models.Effect.effect_id == models.Card.effect_id)
         .all()
     )
-    return [effect.effect for effect in effects]  
+    return [effect[0] for effect in effects]  
 
 
 
