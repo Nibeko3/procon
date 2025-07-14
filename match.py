@@ -81,3 +81,8 @@ def get_match(
         raise HTTPException(status_code=403, detail="You are not a participant in this match")
 
     return match
+
+@router.get("/user/exists/{username}")
+def check_username_exists(username: str, db: Session = Depends(get_db)):
+    exists = db.query(models.Player).filter_by(username=username).first()
+    return {"exists": bool(exists)}
