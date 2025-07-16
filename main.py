@@ -38,7 +38,7 @@ def get_effect_all(db: Session = Depends(get_db)):
 
 @router.get("/effect.effect")
 def get_effect_effect(db: Session = Depends(get_db)):
-    effects = db.query(models.Effect).all()
+    effects = db.query(models.Effect).order_by(models.Card.card_id).all()
     return [effect.effect for effect in effects]  
 
 @router.get("/effect.effect/filter")
@@ -53,6 +53,7 @@ def get_effects_by_cards(db: Session = Depends(get_db)):
     cards = (
         db.query(models.Card)
         .join(models.Effect, models.Card.effect_id == models.Effect.effect_id)
+        .order_by(models.Card.card_id)
         .all()
     )
     return [card.effect.effect for card in cards]
@@ -67,7 +68,7 @@ def get_card_all(db: Session = Depends(get_db)):
 
 @router.get("/card.name")
 def get_card_name(db: Session = Depends(get_db)):
-    cards = db.query(models.Card).all()
+    cards = db.query(models.Card).order_by(models.Card.card_id).all()
     return [card.name for card in cards]  
 
 @router.get("/card.name/filter")
@@ -79,7 +80,7 @@ def get_card_name_filter(card_id: int, db: Session = Depends(get_db)):
 
 @router.get("/card.cost")
 def get_card_cost(db: Session = Depends(get_db)):
-    cards = db.query(models.Card).all()
+    cards = db.query(models.Card).order_by(models.Card.card_id).all()
     return [card.cost for card in cards]  
 
 @router.get("/card.cost/filter")
@@ -91,7 +92,7 @@ def get_card_cost_filter(card_id: int, db: Session = Depends(get_db)):
 
 @router.get("/card.keyword")
 def get_card_keyword(db: Session = Depends(get_db)):
-    cards = db.query(models.Card).all()
+    cards = db.query(models.Card).order_by(models.Card.card_id).all()
     return [card.keyword for card in cards]  
 
 @router.get("/card.keyword/filter")
@@ -103,7 +104,7 @@ def get_card_keyword_filter(card_id: int, db: Session = Depends(get_db)):
 
 @router.get("/card.explanation")
 def get_card_explanation(db: Session = Depends(get_db)):
-    cards = db.query(models.Explanation).all()
+    cards = db.query(models.Explanation).order_by(models.Explanation.card_id).all()
     return [card.explanation for card in cards]  
 
 @router.get("/card.explanation/filter")
