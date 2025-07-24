@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends,HTTPException
 from sqlalchemy.orm import Session
 from database import get_db
 from auth import get_current_user  # トークンからユーザー取得
@@ -24,12 +24,26 @@ def get_rank(score: int) -> str:
     elif score < 2500:
         return "安全確保支援士"
 
-@router.get("/profile")
-def get_profile(
+@router.get("/player/{user_id}")
+def get_player_profile(
+    user_id: str,
     db: Session = Depends(get_db),
     current_user: models.Player = Depends(get_current_user)
 ):
-    # ランキング位置を計算
+    # 自分自身かどうか
+    if user_id == "me":
+        target_user = current_user
+    else:
+        try:
+            target_user_id = int(user_id)
+        except ValueError:
+            raise HTTPException(status_code=400, detail="Invalid user_id")
+
+        target_user = db.query(models.Player).filter_by(user_id=target_user_id).first()
+        if not target_user:
+            raise HTTPException(status_code=404, detail="Player not found")
+
+    # ランキング順位を取得
     ranked_players = (
         db.query(models.Player)
         .order_by(models.Player.score.desc())
@@ -37,13 +51,13 @@ def get_profile(
     )
 
     position = next(
-        (i + 1 for i, p in enumerate(ranked_players) if p.user_id == current_user.user_id),
+        (i + 1 for i, p in enumerate(ranked_players) if p.user_id == target_user.user_id),
         None
     )
 
     return {
-        "username": current_user.username,
-        "score": current_user.score,
-        "rank": get_rank(current_user.score),
+        "username": target_user.username,
+        "score": target_user.score,
+        "rank": get_rank(target_user.score),
         "position": position
     }
