@@ -26,22 +26,13 @@ def get_rank(score: int) -> str:
 
 @router.get("/player/{user_id}")
 def get_player_profile(
-    user_id: str,
+    user_id: int,  # ← str ではなく int
     db: Session = Depends(get_db),
     current_user: models.Player = Depends(get_current_user)
 ):
-    # 自分自身かどうか
-    if user_id == "me":
-        target_user = current_user
-    else:
-        try:
-            target_user_id = int(user_id)
-        except ValueError:
-            raise HTTPException(status_code=400, detail="Invalid user_id")
-
-        target_user = db.query(models.Player).filter_by(user_id=target_user_id).first()
-        if not target_user:
-            raise HTTPException(status_code=404, detail="Player not found")
+    target_user = db.query(models.Player).filter_by(user_id=user_id).first()
+    if not target_user:
+        raise HTTPException(status_code=404, detail="Player not found")
 
     # ランキング順位を取得
     ranked_players = (
