@@ -6,7 +6,7 @@ import models
 
 router = APIRouter()
 
-def get_rank(score: int) -> str:
+def get_grade(score: int) -> str:
     if score < 1500:
         return "全商Ⅲ"
     elif score < 1600:
@@ -48,7 +48,7 @@ def get_player_profile(
 
     return {
         "username": target_user.username,
-        "score": target_user.score,
-        "rank": get_rank(target_user.score),
-        "position": position
+        "grade": get_grade(target_user.score),
+        "rate": target_user.score,
+        "rank": position
     }
