@@ -8,11 +8,11 @@ router = APIRouter()
 
 def get_grade(score: int) -> str:
     if score < 1500:
-        return "全商Ⅲ"
+        return "全商3級"
     elif score < 1600:
-        return "全商Ⅱ"
+        return "全商2級"
     elif score < 1700:
-        return "全商Ⅰ"
+        return "全商1級"
     elif score < 1800:
         return "ベーシック"
     elif score < 1900:
