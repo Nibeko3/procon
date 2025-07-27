@@ -67,3 +67,15 @@ def random_match(
     db.commit()
 
     return new_match
+
+@router.get("/match/{match_id}", response_model=schemas.MatchOut)
+def get_match(
+    match_id: int,
+    db: Session = Depends(get_db),
+):
+    match = db.query(models.Match).filter_by(id=match_id).first()
+    if not match:
+        raise HTTPException(status_code=404, detail="Match not found")
+
+    return match
+
