@@ -69,6 +69,17 @@ class Player(Base):
     matches_as_player1 = relationship("Match", back_populates="player1", foreign_keys="Match.player1_id")
     matches_as_player2 = relationship("Match", back_populates="player2", foreign_keys="Match.player2_id")
 
+class Match(Base):
+    __tablename__ = "matches"
+
+    id = Column(Integer, primary_key=True, index=True)
+    current_turn = Column(Integer, default=1, nullable=False)
+    current_player_id = Column(Integer, ForeignKey("players.user_id"))
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    current_player = relationship("Player", foreign_keys=[current_player_id])
+    players = relationship("MatchPlayer", back_populates="match")
+
 class MatchPlayer(Base):
     __tablename__ = "match_players"
     __table_args__ = (
