@@ -65,35 +65,54 @@ class Player(Base):
     score = Column(Integer, default=1500)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
-    # 逆参照：参加したマッチ
-    matches_as_player1 = relationship("Match", back_populates="player1", foreign_keys="Match.player1_id")
-    matches_as_player2 = relationship("Match", back_populates="player2", foreign_keys="Match.player2_id")
+    # MatchPlayerテーブルからの関連（自分として参加しているマッチ）
+    my_match_entries = relationship(
+        "MatchPlayer",
+        foreign_keys="[MatchPlayer.my_id]",
+        back_populates="my_player"
+    )
+
+    # MatchPlayerテーブルからの関連（相手として含まれているマッチ）
+    opponent_match_entries = relationship(
+        "MatchPlayer",
+        foreign_keys="[MatchPlayer.opponent_id]",
+        back_populates="opponent_player"
+    )
+
 
 class Match(Base):
     __tablename__ = "matches"
 
     id = Column(Integer, primary_key=True, index=True)
     current_turn = Column(Integer, default=1, nullable=False)
-    current_player_id = Column(Integer, ForeignKey("players.user_id"))
+    current_player_id = Column(Integer, ForeignKey("public.players.user_id"))
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
+    # 現在の手番プレイヤー
     current_player = relationship("Player", foreign_keys=[current_player_id])
+
+    # MatchPlayerとの関連（このマッチに参加しているプレイヤー2人）
     players = relationship("MatchPlayer", back_populates="match")
+
 
 class MatchPlayer(Base):
     __tablename__ = "match_players"
     __table_args__ = (
-        # 複合主キー
         PrimaryKeyConstraint("match_id", "my_id"),
     )
 
     match_id = Column(Integer, ForeignKey("matches.id"))
-    my_id = Column(Integer, ForeignKey("players.user_id"))
-    opponent_id = Column(Integer, ForeignKey("players.user_id"))
+    my_id = Column(Integer, ForeignKey("public.players.user_id"))
+    opponent_id = Column(Integer, ForeignKey("public.players.user_id"))
 
     wallet = Column(Integer, default=100, nullable=False)
     production_power = Column(Integer, default=200, nullable=False)
 
+    # マッチとの関連
     match = relationship("Match", back_populates="players")
-    my_player = relationship("Player", foreign_keys=[my_id], backref="my_match_entries")
-    opponent_player = relationship("Player", foreign_keys=[opponent_id], backref="opponent_match_entries")
+
+    # 自分のプレイヤー情報
+    my_player = relationship("Player", foreign_keys=[my_id], back_populates="my_match_entries")
+
+    # 相手のプレイヤー情報
+    opponent_player = relationship("Player", foreign_keys=[opponent_id], back_populates="opponent_match_entries")
