@@ -72,14 +72,10 @@ def random_match(
 def get_match(
     match_id: int,
     db: Session = Depends(get_db),
-    current_user: models.Player = Depends(get_current_user)
 ):
     match = db.query(models.Match).filter_by(id=match_id).first()
     if not match:
         raise HTTPException(status_code=404, detail="Match not found")
-
-    if current_user.user_id not in [match.player1_id, match.player2_id]:
-        raise HTTPException(status_code=403, detail="You are not a participant in this match")
 
     return match
 
