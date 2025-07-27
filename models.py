@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey,DateTime
+from sqlalchemy import Column, Integer, String, ForeignKey,PrimaryKeyConstraint,DateTime
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
 from database import Base
@@ -69,23 +69,20 @@ class Player(Base):
     matches_as_player1 = relationship("Match", back_populates="player1", foreign_keys="Match.player1_id")
     matches_as_player2 = relationship("Match", back_populates="player2", foreign_keys="Match.player2_id")
 
-class Match(Base):
-    __tablename__ = "matches"
-    __table_args__ = {"schema": "public"}
+class MatchPlayer(Base):
+    __tablename__ = "match_players"
+    __table_args__ = (
+        # 複合主キー
+        PrimaryKeyConstraint("match_id", "my_id"),
+    )
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    player1_id = Column(Integer, ForeignKey("public.players.user_id"), nullable=False)
-    player2_id = Column(Integer, ForeignKey("public.players.user_id"), nullable=True)
-    current_turn = Column(Integer, default=1, nullable=False)
-    current_player_id = Column(Integer, ForeignKey("public.players.user_id"), nullable=False)
+    match_id = Column(Integer, ForeignKey("matches.id"))
+    my_id = Column(Integer, ForeignKey("players.user_id"))
+    opponent_id = Column(Integer, ForeignKey("players.user_id"))
 
-    wallet_player1 = Column(Integer, default=100, nullable=False)
-    wallet_player2 = Column(Integer, default=100, nullable=False)
-    production_power_player1 = Column(Integer, default=200, nullable=False)
-    production_power_player2 = Column(Integer, default=200, nullable=False)
+    wallet = Column(Integer, default=100, nullable=False)
+    production_power = Column(Integer, default=200, nullable=False)
 
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
-
-    # 参照
-    player1 = relationship("Player", foreign_keys=[player1_id], back_populates="matches_as_player1")
-    player2 = relationship("Player", foreign_keys=[player2_id], back_populates="matches_as_player2")
+    match = relationship("Match", back_populates="players")
+    my_player = relationship("Player", foreign_keys=[my_id], backref="my_match_entries")
+    opponent_player = relationship("Player", foreign_keys=[opponent_id], backref="opponent_match_entries")

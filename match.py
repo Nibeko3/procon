@@ -1,70 +1,71 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from sqlalchemy import func
 import models, schemas
 from database import get_db
 from auth import get_current_user  # トークンからユーザー取得
 
 router = APIRouter()
 
-@router.post("/match/create", response_model=schemas.MatchOut)
-def create_match(
-    request: schemas.MatchCreate,
-    db: Session = Depends(get_db),
-    current_user: models.Player = Depends(get_current_user)
-):
-    opponent = db.query(models.Player).filter_by(username=request.opponent_username).first()
-    if not opponent:
-        raise HTTPException(status_code=404, detail="Opponent not found")
-
-    if opponent.user_id == current_user.user_id:
-        raise HTTPException(status_code=400, detail="Cannot match against yourself")
-
-    new_match = models.Match(
-        player1_id=current_user.user_id,
-        player2_id=opponent.user_id,
-        current_player_id=current_user.user_id
-    )
-
-    db.add(new_match)
-    db.commit()
-    db.refresh(new_match)
-    return new_match
-
 @router.post("/match/random", response_model=schemas.MatchOut)
-def auto_match(
+def random_match(
     db: Session = Depends(get_db),
     current_user: models.Player = Depends(get_current_user)
 ):
-    # 自分がすでに待機中か確認
-    existing = db.query(models.Match).filter(
-        models.Match.player1_id == current_user.user_id,
-        models.Match.player2_id == None
+    # すでに待機中ならそのマッチを返す
+    existing_entry = db.query(models.MatchPlayer).filter(
+        models.MatchPlayer.my_id == current_user.user_id
     ).first()
-    if existing:
-        return existing
 
-    # 他人が待機してるマッチがあれば参加
-    open_match = db.query(models.Match).filter(
-        models.Match.player2_id == None,
-        models.Match.player1_id != current_user.user_id
-    ).first()
+    if existing_entry:
+        match = db.query(models.Match).filter_by(id=existing_entry.match_id).first()
+        return match
+
+    # 相手がまだいないマッチを探す（マッチID単位で1人だけのもの）
+    subquery = db.query(
+        models.MatchPlayer.match_id
+    ).group_by(models.MatchPlayer.match_id).having(func.count() == 1).subquery()
+
+    open_match = db.query(models.Match).filter(models.Match.id.in_(subquery)).first()
 
     if open_match:
-        open_match.player2_id = current_user.user_id
-        open_match.current_player_id = open_match.player1_id
+        # 相手となるプレイヤーのIDを取得
+        opponent_entry = db.query(models.MatchPlayer).filter_by(match_id=open_match.id).first()
+        opponent_id = opponent_entry.my_id
+
+        # 自分側を登録
+        new_entry = models.MatchPlayer(
+            match_id=open_match.id,
+            my_id=current_user.user_id,
+            opponent_id=opponent_id
+        )
+        db.add(new_entry)
+
+        # 相手のopponent_idも更新
+        opponent_entry.opponent_id = current_user.user_id
+
+        # ターン情報も初期化（必要なら）
+        open_match.current_player_id = opponent_id
         db.commit()
-        db.refresh(open_match)
         return open_match
 
-    # 新しく待機マッチを作成
+    # 空きマッチがなければ新規作成
     new_match = models.Match(
-        player1_id=current_user.user_id,
-        player2_id=0,
+        current_turn=1,
         current_player_id=current_user.user_id
     )
     db.add(new_match)
     db.commit()
     db.refresh(new_match)
+
+    new_entry = models.MatchPlayer(
+        match_id=new_match.id,
+        my_id=current_user.user_id,
+        opponent_id=None
+    )
+    db.add(new_entry)
+    db.commit()
+
     return new_match
 
 @router.get("/match/{match_id}", response_model=schemas.MatchOut)
@@ -81,3 +82,4 @@ def get_match(
         raise HTTPException(status_code=403, detail="You are not a participant in this match")
 
     return match
+
