@@ -103,7 +103,7 @@ class MatchPlayer(Base):
 
     match_id = Column(Integer, ForeignKey("matches.id"))
     my_id = Column(Integer, ForeignKey("public.players.user_id"))
-    opponent_id = Column(Integer, ForeignKey("public.players.user_id"))
+    opponent_id = Column(Integer, ForeignKey("public.players.user_id"),nullable=True)
 
     wallet = Column(Integer, default=100, nullable=False)
     production_power = Column(Integer, default=200, nullable=False)
