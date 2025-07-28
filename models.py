@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey,PrimaryKeyConstraint,DateTime
+from sqlalchemy import Column, Integer, String,Boolean,ForeignKey,PrimaryKeyConstraint,DateTime
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
 from database import Base
@@ -85,7 +85,8 @@ class MatchPlayer(Base):
 
     wallet = Column(Integer, default=100, nullable=False)
     production_power = Column(Integer, default=200, nullable=False)
-
+    is_active = Column(Boolean, default=True, nullable=False)
+    
     # マッチとの関連
     match = relationship("Match", back_populates="players")
 

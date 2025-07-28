@@ -14,7 +14,8 @@ def random_match(
 ):
     # すでに待機中ならそのマッチを返す
     existing_entry = db.query(models.MatchPlayer).filter(
-        models.MatchPlayer.my_id == current_user.user_id
+        models.MatchPlayer.my_id == current_user.user_id,
+        models.MatchPlayer.is_active == True
     ).first()
 
     if existing_entry:
@@ -23,10 +24,11 @@ def random_match(
 
     # 待機中プレイヤーを探す
     open_entry = (
-        db.query(models.MatchPlayer)
-        .filter(models.MatchPlayer.opponent_id == None)
-        .filter(models.MatchPlayer.my_id != current_user.user_id)
-        .first()
+        db.query(models.MatchPlayer).filter(
+            models.MatchPlayer.opponent_id == None,
+            models.MatchPlayer.is_active == True,
+            models.MatchPlayer.my_id != current_user.user_id
+        ).first()
     )
 
     if open_entry:
@@ -79,3 +81,22 @@ def get_match(
 
     return match
 
+@router.post("/match/{match_id}/cancel")
+def cancel_match(
+    match_id: int,
+    db: Session = Depends(get_db),
+    current_user: models.Player = Depends(get_current_user)
+):
+    # 該当するマッチプレイヤーエントリを取得
+    entry = db.query(models.MatchPlayer).filter_by(
+        match_id=match_id, my_id=current_user.user_id
+    ).first()
+
+    if not entry:
+        raise HTTPException(status_code=404, detail="You are not in this match")
+
+    # 自分のis_activeをFalseにする
+    entry.is_active = False
+
+    db.commit()
+    return {"message": "Match canceled successfully"}
