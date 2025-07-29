@@ -100,3 +100,19 @@ def cancel_match(
 
     db.commit()
     return {"message": "Match canceled successfully"}
+
+@router.get("/match_players/{match_id}/{user_id}", response_model=schemas.MatchPlayerOut)
+def get_match_player(
+    match_id: int,
+    user_id: int,
+    db: Session = Depends(get_db),
+):
+    entry = db.query(models.MatchPlayer).filter_by(
+        match_id=match_id,
+        my_id=user_id
+    ).first()
+
+    if not entry:
+        raise HTTPException(status_code=404, detail="MatchPlayer not found")
+
+    return entry  # ← response_model により自動でスキーマ形式に変換
