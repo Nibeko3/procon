@@ -1,6 +1,7 @@
 # schemas.py
 from pydantic import BaseModel, ConfigDict
 from datetime import datetime
+from typing import Optional
 
 class EffectOut(BaseModel):
     effect_id: int
@@ -26,3 +27,13 @@ class MatchOut(BaseModel):
         "from_attributes": True
     }
 
+class MatchPlayerOut(BaseModel):
+    match_id: int
+    my_id: int
+    opponent_id: Optional[int]
+    wallet: int
+    production_power: int
+
+    model_config = {
+        "from_attributes": True
+    }
