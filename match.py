@@ -81,6 +81,11 @@ def get_match(
 
     return match
 
+@router.get("/match_players/{match_id}/ready")
+def is_match_ready(match_id: int, db: Session = Depends(get_db)):
+    entry = db.query(models.MatchPlayer).filter_by(match_id=match_id, opponent_id=None).first()
+    return {"ready": entry is None}
+
 @router.post("/match/{match_id}/cancel")
 def cancel_match(
     match_id: int,
