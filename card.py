@@ -26,5 +26,5 @@ def get_card_detail(
         keyword=card.keyword,
         cost=card.cost,
         effect=card.effect.effect,
-        explanation=card.explanation[0].explanation
+        explanation=card.explanation.explanation
     )
