@@ -118,6 +118,30 @@ def get_card_explanation_filter(card_id: int, db: Session = Depends(get_db)):
         return "該当する効果が見つかりません"
     return card.explanation
 
+@router.post("/match_players/{match_id}/{user_id}/pay_cost")
+def pay_cost(
+    match_id: int,
+    user_id: int,
+    amount: int,  # 消費するコスト（例: 10）
+    db: Session = Depends(get_db)
+):
+    entry = db.query(models.MatchPlayer).filter_by(
+        match_id=match_id,
+        my_id=user_id
+    ).first()
+
+    entry.wallet -= amount
+    db.commit()
+
+    return {
+        "message": f"{amount} 支払いました。",
+        "wallet": entry.wallet
+    }
+
+
+
+
+
 app.include_router(router)
 
 
