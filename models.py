@@ -22,7 +22,7 @@ class Card(Base):
     cost = Column(Integer, nullable=False)
     effect_id = Column(Integer, ForeignKey("public.effects.effect_id"), nullable=False)
 
-    explanation = relationship("Explanation", back_populates="card")
+    explanation = relationship("Explanation", back_populates="card",uselist=False)
     effect = relationship("Effect", back_populates="cards")
 
 class Explanation(Base):
