@@ -8,6 +8,7 @@ import os
 from auth import router as auth_router
 from match import router as match_router
 from profile import router as profile_router
+from card import router as card_router
 
 
 
@@ -15,6 +16,7 @@ app = FastAPI()
 router = APIRouter()
 app.include_router(auth_router)
 app.include_router(match_router)
+app.include_router(card_router)
 app.include_router(profile_router)
 
 def get_db():

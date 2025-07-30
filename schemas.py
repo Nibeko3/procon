@@ -38,3 +38,15 @@ class MatchPlayerOut(BaseModel):
     model_config = {
         "from_attributes": True
     }
+
+class CardDetailOut(BaseModel):
+    card_id: int
+    name: str
+    keyword: str
+    cost: int
+    effect: str
+    explanation: str
+
+    model_config = {
+        "from_attributes": True
+    }
