@@ -125,7 +125,6 @@ def get_match_player(
         my_id=entry.my_id,
         my_username=entry.my_player.username,
         opponent_id=entry.opponent_id,
-        opponent_username=entry.opponent_player.username,
         wallet=entry.wallet,
         production_power=entry.production_power
     )
