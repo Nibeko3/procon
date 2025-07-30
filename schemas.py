@@ -30,10 +30,11 @@ class MatchOut(BaseModel):
 class MatchPlayerOut(BaseModel):
     match_id: int
     my_id: int
+    my_username: str                # ← 自分の名前を追加
     opponent_id: Optional[int]
+    opponent_username: Optional[str]
     wallet: int
     production_power: int
-
     model_config = {
         "from_attributes": True
     }

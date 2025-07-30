@@ -120,4 +120,12 @@ def get_match_player(
     if not entry:
         raise HTTPException(status_code=404, detail="MatchPlayer not found")
 
-    return entry  # ← response_model により自動でスキーマ形式に変換
+    return schemas.MatchPlayerOut(
+        match_id=entry.match_id,
+        my_id=entry.my_id,
+        my_username=entry.my_player.username,
+        opponent_id=entry.opponent_id,
+        opponent_username=entry.opponent_player.username,
+        wallet=entry.wallet,
+        production_power=entry.production_power
+    )
